@@ -1,0 +1,3 @@
+[submodule "bookshelf_project"]
+	path = bookshelf_project
+	url = https://github.com/artemychych/bookshelf-project.git
