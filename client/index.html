@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Diszoom </title>
+</head>
+
+<body>
+
+<button id="joinBtn">Join Room</button>
+<button id="shareScreenBtn">Share Screen</button>
+
+<h3>Local Video</h3>
+<video id="localVideo" autoplay muted playsinline></video>
+
+<h3>Remote Peers</h3>
+<div id="videos"></div>
+
+<script src="webrtc.js"></script>
+
+</body>
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+<script src="https://unpkg.com/mediasoup-client@3.9.2/lib/index.js"></script>
+<script src="webrtc.js"></script>
+</html>
