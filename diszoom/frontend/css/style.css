@@ -1,0 +1,280 @@
+* { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+}
+
+body { 
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+    height: 100vh; 
+    overflow: hidden; 
+    background: #1a1a1a; 
+    color: #fff; 
+}
+
+.app { 
+    display: flex; 
+    height: 100vh; 
+}
+
+.servers-sidebar { 
+    width: 72px; 
+    background: #1e1e1e; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    padding: 12px 0; 
+    overflow-y: auto; 
+}
+
+.server-icon { 
+    width: 48px; 
+    height: 48px; 
+    border-radius: 50%; 
+    background: #36393f; 
+    margin-bottom: 8px; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    font-weight: bold; 
+    color: #fff; 
+    cursor: pointer; 
+    transition: border-radius 0.2s; 
+}
+
+.server-icon:hover { 
+    border-radius: 30%; 
+    background: #5865f2; 
+}
+
+.server-icon.active { 
+    border-radius: 30%; 
+    background: #5865f2; 
+}
+
+.channels-sidebar { 
+    width: 240px; 
+    background: #2b2d31; 
+    display: flex; 
+    flex-direction: column; 
+}
+
+.channels-header { 
+    padding: 16px; 
+    border-bottom: 1px solid #1e1f22; 
+    font-weight: bold; 
+}
+
+.channels-list { 
+    flex: 1; 
+    padding: 8px; 
+    overflow-y: auto; 
+}
+
+.channel-category { 
+    color: #949ba4; 
+    font-size: 12px; 
+    text-transform: uppercase; 
+    padding: 16px 8px 4px; 
+}
+
+.channel-item { 
+    padding: 6px 8px; 
+    margin: 2px 0; 
+    border-radius: 4px; 
+    display: flex; 
+    align-items: center; 
+    color: #949ba4; 
+    cursor: pointer; 
+}
+
+.channel-item:hover { 
+    background: #3c3f45; 
+    color: #fff; 
+}
+
+.channel-item.voice::before { 
+    content: "🔊"; 
+    margin-right: 8px; 
+    font-size: 14px; 
+}
+
+.channel-item.text::before { 
+    content: "#"; 
+    margin-right: 8px; 
+    font-size: 18px; 
+    font-weight: bold; 
+}
+
+.main-content { 
+    flex: 1; 
+    display: flex; 
+    flex-direction: column; 
+    background: #313338; 
+}
+
+.chat-header { 
+    padding: 16px; 
+    border-bottom: 1px solid #1f2023; 
+    font-weight: bold; 
+}
+
+.messages-container { 
+    flex: 1; 
+    padding: 16px; 
+    overflow-y: auto; 
+}
+
+.message { 
+    display: flex; 
+    margin-bottom: 16px; 
+}
+
+.message-avatar { 
+    width: 40px; 
+    height: 40px; 
+    border-radius: 50%; 
+    background: #5865f2; 
+    margin-right: 16px; 
+}
+
+.message-content { 
+    flex: 1; 
+}
+
+.message-author { 
+    font-weight: bold; 
+    margin-bottom: 4px; 
+}
+
+.message-text { 
+    color: #dbdee1; 
+}
+
+.message-input { 
+    padding: 16px; 
+    border-top: 1px solid #1f2023; 
+}
+
+.message-input input { 
+    width: 100%; 
+    padding: 12px; 
+    background: #383a40; 
+    border: none; 
+    border-radius: 8px; 
+    color: #fff; 
+}
+
+.voice-panel { 
+    display: none; 
+    flex: 1; 
+    flex-direction: column; 
+    padding: 16px; 
+    background: #1e1f22; 
+}
+
+.voice-panel.active { 
+    display: flex; 
+}
+
+.video-grid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+    gap: 16px; 
+    flex: 1; 
+}
+
+.video-container { 
+    background: #2b2d31; 
+    border-radius: 8px; 
+    overflow: hidden; 
+    position: relative; 
+    aspect-ratio: 16/9; 
+}
+
+.video-container video { 
+    width: 100%; 
+    height: 100%; 
+    object-fit: cover; 
+}
+
+.participant-name { 
+    position: absolute; 
+    bottom: 8px; 
+    left: 8px; 
+    background: rgba(0,0,0,0.6); 
+    padding: 4px 8px; 
+    border-radius: 4px; 
+    font-size: 12px; 
+}
+
+.voice-controls { 
+    display: flex; 
+    justify-content: center; 
+    gap: 16px; 
+    padding: 16px; 
+}
+
+.control-btn { 
+    width: 48px; 
+    height: 48px; 
+    border-radius: 50%; 
+    background: #2b2d31; 
+    border: none; 
+    color: #fff; 
+    font-size: 20px; 
+    cursor: pointer; 
+}
+
+.control-btn.danger { 
+    background: #da373c; 
+}
+
+.control-btn:hover { 
+    background: #3c3f45; 
+}
+
+.login-container { 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    height: 100vh; 
+    background: #1a1a1a; 
+}
+
+.login-box { 
+    background: #2b2d31; 
+    padding: 40px; 
+    border-radius: 8px; 
+    width: 400px; 
+}
+
+.login-box h2 { 
+    margin-bottom: 24px; 
+    text-align: center; 
+}
+
+.login-box input { 
+    width: 100%; 
+    padding: 12px; 
+    margin-bottom: 16px; 
+    background: #1e1f22; 
+    border: none; 
+    border-radius: 4px; 
+    color: #fff; 
+}
+
+.login-box button { 
+    width: 100%; 
+    padding: 12px; 
+    background: #5865f2; 
+    border: none; 
+    border-radius: 4px; 
+    color: #fff; 
+    font-weight: bold; 
+    cursor: pointer; 
+}
+
+.login-box button:hover { 
+    background: #4752c4; 
+}
