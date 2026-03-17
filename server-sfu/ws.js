@@ -1,4 +1,4 @@
-import { randomUUID } from "crypto";
+﻿import { randomUUID } from "crypto";
 
 import { metrics } from "./metrics.js";
 import { canJoinRoom } from "./auth.js";
