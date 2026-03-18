@@ -1,0 +1,7 @@
+[submodule "bookshelf_project"]
+	path = bookshelf_project
+	url = https://github.com/artemychych/bookshelf-project.git
+	branch = main
+[submodule "project-to_do_list"]
+	path = project-to_do_list
+	url = https://github.com/Ruzeon/project-to_do_list.git
