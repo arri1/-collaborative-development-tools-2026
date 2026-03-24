@@ -1,2 +1,6 @@
-node_modules/
-__pycache__/
+﻿node_modules/
+.DS_Store
+npm-debug.log*
+.env
+.md
+public/

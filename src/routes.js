@@ -4,21 +4,12 @@ import { permanentRooms, sessionRooms } from "./state.js";
 import { metrics, renderMetrics } from "./metrics.js";
 import { requireAdmin } from "./auth.js";
 import { nowIso } from "./utils.js";
-import { closeRoomClients } from "./rooms.js";
+import { closeRoom } from "./mediasoup_manager.js";
 import {
   logEvent,
   savePermanentRoomsToDisk,
   saveSessionRoomsToDisk
 } from "./storage.js";
-import {
-  publishRoomEvent,
-  publishPermanentRoomEvent,
-  publishSignal,
-  redisSetPermanent,
-  redisDelPermanent,
-  redisSetSession,
-  redisDelSession
-} from "./redis_bus.js";
 
 export function registerRoutes(app, deps) {
   const {
@@ -74,8 +65,6 @@ export function registerRoutes(app, deps) {
     };
     permanentRooms.set(roomId, room);
     await savePermanentRoomsToDisk();
-    await redisSetPermanent(room);
-    await publishPermanentRoomEvent("created", { room });
     await logEvent("permanent-room-created", { roomId });
     res.status(201).json(room);
   });
@@ -90,8 +79,6 @@ export function registerRoutes(app, deps) {
     room.allowedTokens = Array.isArray(tokens) ? tokens : [];
     permanentRooms.set(id, room);
     await savePermanentRoomsToDisk();
-    await redisSetPermanent(room);
-    await publishPermanentRoomEvent("updated", { room });
     await logEvent("permanent-room-tokens-updated", { roomId: id });
     res.json(room);
   });
@@ -103,9 +90,7 @@ export function registerRoutes(app, deps) {
     }
     permanentRooms.delete(id);
     await savePermanentRoomsToDisk();
-    await redisDelPermanent(id);
-    await publishPermanentRoomEvent("deleted", { roomId: id });
-    closeRoomClients(id, "permanent room deleted");
+    closeRoom(id);
     await logEvent("permanent-room-deleted", { roomId: id });
     res.json({ ok: true });
   });
@@ -134,8 +119,6 @@ export function registerRoutes(app, deps) {
     sessionRooms.set(roomId, room);
     scheduleSessionExpiry(roomId);
     await saveSessionRoomsToDisk();
-    await redisSetSession(room);
-    await publishRoomEvent("created", { room });
     await logEvent("session-room-created", { roomId });
     res.status(201).json({ id: roomId, name: room.name, createdAt, expiresAt, joinToken });
   });
@@ -149,8 +132,6 @@ export function registerRoutes(app, deps) {
     room.joinToken = randomUUID();
     sessionRooms.set(id, room);
     await saveSessionRoomsToDisk();
-    await redisSetSession(room);
-    await publishRoomEvent("updated", { room });
     await logEvent("session-room-token-rotated", { roomId: id });
     res.json({ id, joinToken: room.joinToken });
   });
@@ -161,26 +142,6 @@ export function registerRoutes(app, deps) {
       return res.status(404).json({ error: "room not found" });
     }
     await cleanupSessionRoom(id, "manual-close");
-    res.json({ ok: true });
-  });
-
-  // Optional: internal route to force room close (not exposed in README)
-  app.post("/rooms/session/:id/_close_internal", requireAdmin, async (req, res) => {
-    const { id } = req.params;
-    if (!sessionRooms.has(id)) {
-      return res.status(404).json({ error: "room not found" });
-    }
-    await cleanupSessionRoom(id, "internal-close");
-    res.json({ ok: true });
-  });
-
-  // Expose signal publish for HTTP admin usage if needed later
-  app.post("/signals/broadcast", requireAdmin, async (req, res) => {
-    const { roomId, message } = req.body || {};
-    if (!roomId || !message) {
-      return res.status(400).json({ error: "roomId and message required" });
-    }
-    await publishSignal(roomId, message, null);
     res.json({ ok: true });
   });
 }
