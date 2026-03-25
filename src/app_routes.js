@@ -2,10 +2,11 @@ import { randomUUID, createHash } from "crypto";
 import { getAppState, updateAppState } from "./app_store.js";
 import { permanentRooms } from "./state.js";
 import { savePermanentRoomsToDisk, logEvent } from "./storage.js";
-import { closeRoom } from "./mediasoup_manager.js";
+import { closeRoom, getRoom, listPeers } from "./mediasoup_manager.js";
 import { nowIso } from "./utils.js";
 
 const PASSWORD_SALT = process.env.APP_AUTH_SALT || "diszoom";
+const appEventClients = new Set();
 
 function hashPassword(password) {
   return createHash("sha256").update(`${PASSWORD_SALT}:${password}`).digest("hex");
@@ -32,6 +33,19 @@ function auth(req, res, next) {
 function ensureMember(server, userId) {
   if (server.ownerId === userId) return true;
   return server.members.some(m => m.userId === userId);
+}
+
+export function broadcastAppEvent(event) {
+  const state = getAppState();
+  for (const client of appEventClients) {
+    if (event.serverId) {
+      const server = state.servers.find(s => s.id === event.serverId);
+      if (!server || !ensureMember(server, client.userId)) continue;
+    }
+    try {
+      client.res.write(`data: ${JSON.stringify(event)}\n\n`);
+    } catch {}
+  }
 }
 
 function hasPerm(server, userId, perm) {
@@ -135,6 +149,36 @@ function serverDetail(server, state) {
 }
 
 export function registerAppRoutes(app) {
+  app.get("/app/events", (req, res) => {
+    const token = getToken(req) || (typeof req.query.token === "string" ? req.query.token : "");
+    const state = getAppState();
+    const userId = state.sessions[token];
+    if (!userId) {
+      res.status(401).end();
+      return;
+    }
+    const user = state.users.find(u => u.id === userId);
+    if (!user) {
+      res.status(401).end();
+      return;
+    }
+    res.writeHead(200, {
+      "Content-Type": "text/event-stream",
+      "Cache-Control": "no-cache",
+      "Connection": "keep-alive"
+    });
+    res.write(`event: ready\ndata: ${JSON.stringify({ ok: true })}\n\n`);
+    const client = { res, userId };
+    appEventClients.add(client);
+    const heartbeat = setInterval(() => {
+      try { res.write(": ping\n\n"); } catch {}
+    }, 25000);
+    req.on("close", () => {
+      clearInterval(heartbeat);
+      appEventClients.delete(client);
+    });
+  });
+
   app.post("/app/register", (req, res) => {
     const { username, password } = req.body || {};
     if (!username || !password) return res.status(400).json({ error: "missing fields" });
@@ -228,6 +272,7 @@ export function registerAppRoutes(app) {
         if (!user.visits.includes(server.id)) user.visits.push(server.id);
       }
     });
+    broadcastAppEvent({ type: "server-created", serverId: server.id });
     res.json(serverSummary(server));
   });
 
@@ -262,6 +307,7 @@ export function registerAppRoutes(app) {
       srv.channels.push(channel);
     });
     await ensureMediaRoom(server, channel);
+    broadcastAppEvent({ type: "channel-added", serverId: server.id, channelId: channel.id });
     res.json(channel);
   });
 
@@ -291,6 +337,7 @@ export function registerAppRoutes(app) {
     if (normalizedType === "media") {
       await removeMediaRoom(server.id, channel.id);
     }
+    broadcastAppEvent({ type: "channel-removed", serverId: server.id, channelId: channel.id });
     res.json({ ok: true });
   });
 
@@ -309,6 +356,7 @@ export function registerAppRoutes(app) {
       const srv = s.servers.find(x => x.id === server.id);
       srv.roles.push(role);
     });
+    broadcastAppEvent({ type: "roles-updated", serverId: server.id });
     res.json(role);
   });
 
@@ -327,6 +375,7 @@ export function registerAppRoutes(app) {
       const member = srv.members.find(m => m.userId === req.params.memberId);
       if (member) member.roleIds = [roleId];
     });
+    broadcastAppEvent({ type: "members-updated", serverId: server.id, userId: req.params.memberId });
     res.json({ ok: true });
   });
 
@@ -364,6 +413,7 @@ export function registerAppRoutes(app) {
         if (!user.visits.includes(srv.id)) user.visits.push(srv.id);
       }
     });
+    broadcastAppEvent({ type: "member-joined", serverId: server.id, userId: req.user.id });
     res.json(serverSummary(server));
   });
 
@@ -376,6 +426,22 @@ export function registerAppRoutes(app) {
     }
     const list = server.messages[channelId] || [];
     res.json({ messages: list });
+  });
+
+  app.get("/app/servers/:id/media/:channelId/peers", auth, (req, res) => {
+    const state = getAppState();
+    const server = state.servers.find(s => s.id === req.params.id);
+    if (!server || !ensureMember(server, req.user.id)) {
+      return res.status(404).json({ error: "server not found" });
+    }
+    const channel = server.channels.find(c => c.id === req.params.channelId);
+    if (!channel || normalizeChannelType(channel.type) !== "media") {
+      return res.status(404).json({ error: "channel not found" });
+    }
+    const roomId = `${server.id}-${channel.id}`;
+    const room = getRoom(roomId);
+    const peers = room ? listPeers(room) : [];
+    res.json({ peers });
   });
 
   app.post("/app/servers/:id/messages", auth, (req, res) => {
@@ -397,6 +463,7 @@ export function registerAppRoutes(app) {
       srv.messages[channelId] = srv.messages[channelId] || [];
       srv.messages[channelId].push(msg);
     });
+    broadcastAppEvent({ type: "message-created", serverId: server.id, channelId });
     res.json(msg);
   });
 
@@ -420,6 +487,7 @@ export function registerAppRoutes(app) {
         }
       }
     });
+    broadcastAppEvent({ type: "server-deleted", serverId: server.id });
     res.json({ ok: true });
   });
 }

@@ -1,7 +1,7 @@
 ﻿import path from "path";
 import { randomUUID } from "crypto";
 
-export const PORT = process.env.PORT ? Number(process.env.PORT) : 8080;
+export const PORT = process.env.PORT ? Number(process.env.PORT) : 443;
 export const DATA_DIR = process.env.DATA_DIR || path.resolve("data");
 export const PERM_ROOMS_FILE = path.join(DATA_DIR, "rooms.json");
 export const SESSION_ROOMS_FILE = path.join(DATA_DIR, "session_rooms.json");
@@ -66,3 +66,11 @@ const parsedIce = parseIceServers();
 export const ICE_SERVERS = parsedIce.length > 0
   ? parsedIce
   : [{ urls: "stun:stun.l.google.com:19302" }];
+
+export const DATABASE_URL = process.env.DATABASE_URL || process.env.PG_CONNECTION_STRING || "";
+export const PGHOST = process.env.PGHOST || "127.0.0.1";
+export const PGPORT = process.env.PGPORT ? Number(process.env.PGPORT) : 5432;
+export const PGUSER = process.env.PGUSER || "postgres";
+export const PGPASSWORD = process.env.PGPASSWORD || "";
+export const PGDATABASE = process.env.PGDATABASE || "diszoom";
+export const PGSSL = (process.env.PGSSL || "false") === "true";

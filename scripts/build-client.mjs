@@ -3,7 +3,7 @@ import { promises as fs } from "fs";
 import path from "path";
 
 const root = process.cwd();
-const entry = path.join(root, "client", "app.js");
+const entry = path.join(root, "client", "app.jsx");
 const outfile = path.join(root, "public", "app.bundle.js");
 
 await build({
@@ -13,7 +13,8 @@ await build({
   sourcemap: true,
   format: "esm",
   target: ["es2020"],
-  outfile
+  outfile,
+  jsx: "automatic"
 });
 
 // Copy static assets

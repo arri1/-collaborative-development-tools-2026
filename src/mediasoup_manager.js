@@ -93,6 +93,18 @@ export function listProducers(room) {
   return list;
 }
 
+export function listPeers(room) {
+  const list = [];
+  for (const peer of room.peers.values()) {
+    list.push({
+      peerId: peer.id,
+      userId: peer.userId || "",
+      username: peer.username || "User"
+    });
+  }
+  return list;
+}
+
 export async function createWebRtcTransport(router) {
   const transport = await router.createWebRtcTransport({
     listenIps: [{ ip: MEDIASOUP_LISTEN_IP, announcedIp: MEDIASOUP_ANNOUNCED_IP || undefined }],

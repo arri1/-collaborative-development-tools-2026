@@ -383,18 +383,69 @@ button.danger {
 .media-remote {
   display: grid;
   gap: 12px;
-  grid-template-columns: repeat(auto-fit, minmax(var(--tile-size, 240px), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-auto-flow: row;
+  align-items: stretch;
 }
 
 .media-panel video {
   width: 100%;
-  border-radius: 12px;
   background: #000;
   object-fit: cover;
 }
 
 .media-remote audio {
   display: none;
+}
+
+.media-tile {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: #05070f;
+  min-height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.media-tile video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.media-label {
+  position: absolute;
+  left: 8px;
+  bottom: 8px;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+}
+
+.media-tile.audio-only {
+  min-height: 140px;
+}
+
+.media-audio-placeholder {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7a66ff, #5cc8ff);
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  color: #0a0d1b;
+  font-size: 20px;
+}
+
+.muted {
+  color: var(--muted);
+  font-size: 12px;
 }
 
 .member-menu {

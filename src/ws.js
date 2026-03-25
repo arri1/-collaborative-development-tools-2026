@@ -4,6 +4,7 @@ import { metrics } from "./metrics.js";
 import { canJoinRoom } from "./auth.js";
 import { logEvent } from "./storage.js";
 import { getRoomType } from "./rooms.js";
+import { broadcastAppEvent } from "./app_routes.js";
 import {
   getOrCreateRoom,
   createPeer,
@@ -11,6 +12,17 @@ import {
   listProducers,
   createWebRtcTransport
 } from "./mediasoup_manager.js";
+
+function parseServerChannel(roomId) {
+  if (!roomId || roomId.length < 73) return null;
+  if (roomId[36] !== "-") return null;
+  const serverId = roomId.slice(0, 36);
+  const channelId = roomId.slice(37);
+  if (serverId.length === 36 && channelId.length === 36) {
+    return { serverId, channelId };
+  }
+  return null;
+}
 
 function send(ws, message) {
   ws.send(JSON.stringify(message));
@@ -64,6 +76,17 @@ export function registerWebSocket(wss) {
     send(ws, { type: "welcome", peerId, roomId, roomType });
     notifyRoom(room, { notification: "peerJoined", data: { peerId, userId, username } }, peerId);
     void logEvent("peer-joined", { roomId, peerId });
+    const parsedJoin = parseServerChannel(roomId);
+    if (parsedJoin) {
+      broadcastAppEvent({
+        type: "media-peer-joined",
+        roomId,
+        serverId: parsedJoin.serverId,
+        channelId: parsedJoin.channelId,
+        userId,
+        username
+      });
+    }
 
     ws.on("message", async data => {
       metrics.ws_messages_total += 1;
@@ -246,6 +269,17 @@ export function registerWebSocket(wss) {
       removePeer(room, peerId);
       notifyRoom(room, { notification: "peerLeft", data: { peerId, userId, username } }, peerId);
       void logEvent("peer-left", { roomId, peerId });
+      const parsedLeft = parseServerChannel(roomId);
+      if (parsedLeft) {
+        broadcastAppEvent({
+          type: "media-peer-left",
+          roomId,
+          serverId: parsedLeft.serverId,
+          channelId: parsedLeft.channelId,
+          userId,
+          username
+        });
+      }
     });
   });
 }
