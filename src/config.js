@@ -71,6 +71,6 @@ export const DATABASE_URL = process.env.DATABASE_URL || process.env.PG_CONNECTIO
 export const PGHOST = process.env.PGHOST || "127.0.0.1";
 export const PGPORT = process.env.PGPORT ? Number(process.env.PGPORT) : 5432;
 export const PGUSER = process.env.PGUSER || "postgres";
-export const PGPASSWORD = process.env.PGPASSWORD || "";
+export const PGPASSWORD = process.env.PGPASSWORD || "ulpe13";
 export const PGDATABASE = process.env.PGDATABASE || "diszoom";
 export const PGSSL = (process.env.PGSSL || "false") === "true";
