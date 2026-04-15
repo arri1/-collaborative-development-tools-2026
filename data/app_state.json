@@ -1,0 +1,133 @@
+{
+  "users": [
+    {
+      "id": "cfda1e6f-a599-4104-a9e0-98e0e5a3476f",
+      "username": "bilyash",
+      "passwordHash": "9ab4156bd18a8290628d6acf9bbb545e2eaa77c4c68221c56617fb89a07ab800",
+      "visits": [
+        "1d4721de-2009-48b9-bee9-6d4d9f7b57ee"
+      ]
+    },
+    {
+      "id": "80c76ce0-bb7e-469f-8440-a40b9f638548",
+      "username": "nikita",
+      "passwordHash": "9ab4156bd18a8290628d6acf9bbb545e2eaa77c4c68221c56617fb89a07ab800",
+      "visits": [
+        "1d4721de-2009-48b9-bee9-6d4d9f7b57ee"
+      ]
+    },
+    {
+      "id": "8d5c696d-b3e4-4b50-8737-32f166e172a2",
+      "username": "qennu",
+      "passwordHash": "a918c9bc1a8c43b904041c930ed177407659e11188bd1590cead2836f68c6d5d",
+      "visits": [
+        "1d4721de-2009-48b9-bee9-6d4d9f7b57ee"
+      ]
+    }
+  ],
+  "servers": [
+    {
+      "id": "1d4721de-2009-48b9-bee9-6d4d9f7b57ee",
+      "name": "2",
+      "ownerId": "cfda1e6f-a599-4104-a9e0-98e0e5a3476f",
+      "roles": [
+        {
+          "id": "1f493be1-0253-4e74-9ad8-4a259c1a81d1",
+          "name": "Owner",
+          "permissions": {
+            "manageRoles": true,
+            "manageChannels": true,
+            "createInvites": true
+          }
+        },
+        {
+          "id": "101a3092-6119-4c83-80b1-f7fad1303873",
+          "name": "Member",
+          "permissions": {
+            "manageRoles": false,
+            "manageChannels": false,
+            "createInvites": false
+          }
+        }
+      ],
+      "members": [
+        {
+          "userId": "cfda1e6f-a599-4104-a9e0-98e0e5a3476f",
+          "roleIds": [
+            "1f493be1-0253-4e74-9ad8-4a259c1a81d1"
+          ]
+        },
+        {
+          "userId": "80c76ce0-bb7e-469f-8440-a40b9f638548",
+          "roleIds": [
+            "101a3092-6119-4c83-80b1-f7fad1303873"
+          ]
+        },
+        {
+          "userId": "8d5c696d-b3e4-4b50-8737-32f166e172a2",
+          "roleIds": [
+            "101a3092-6119-4c83-80b1-f7fad1303873"
+          ]
+        }
+      ],
+      "channels": [
+        {
+          "id": "bdcf8f6e-84da-4fa0-aeea-249bf544daff",
+          "name": "general",
+          "type": "text"
+        },
+        {
+          "id": "cf99828a-b21a-40a7-9c6e-ffd2413123ca",
+          "name": "1",
+          "type": "media"
+        },
+        {
+          "id": "bffc484a-5a73-42b7-a061-29b65c9e3cc8",
+          "name": "2",
+          "type": "media"
+        }
+      ],
+      "invites": [
+        {
+          "code": "PDCOV7",
+          "createdBy": "cfda1e6f-a599-4104-a9e0-98e0e5a3476f",
+          "createdAt": 1774359609528
+        },
+        {
+          "code": "HR8GWI",
+          "createdBy": "cfda1e6f-a599-4104-a9e0-98e0e5a3476f",
+          "createdAt": 1774362966327
+        }
+      ],
+      "messages": {
+        "bdcf8f6e-84da-4fa0-aeea-249bf544daff": [
+          {
+            "id": "8911ef0c-b681-4e82-9304-b17eab80a6d2",
+            "text": "asdads",
+            "author": "qennu",
+            "ts": 1774363430615,
+            "channelId": "bdcf8f6e-84da-4fa0-aeea-249bf544daff"
+          },
+          {
+            "id": "af6e7281-fd4d-49e6-8530-368e175f2873",
+            "text": "123",
+            "author": "nikita",
+            "ts": 1774363458957,
+            "channelId": "bdcf8f6e-84da-4fa0-aeea-249bf544daff"
+          }
+        ]
+      },
+      "mediaJoinToken": "541f4b63-628c-4b8f-a44e-c1de0f36753c"
+    }
+  ],
+  "sessions": {
+    "87ef0239-e790-47da-981b-b0413b67eda0": "cfda1e6f-a599-4104-a9e0-98e0e5a3476f",
+    "7fbdf10b-2d20-45cc-804e-00f662ab1700": "80c76ce0-bb7e-469f-8440-a40b9f638548",
+    "5da47c29-5826-4922-b20e-56d184fd2151": "80c76ce0-bb7e-469f-8440-a40b9f638548",
+    "7823dc69-0be9-405f-b838-0c1e3b8ca597": "8d5c696d-b3e4-4b50-8737-32f166e172a2",
+    "8afab323-5dc7-42da-9b11-f70087669f7c": "cfda1e6f-a599-4104-a9e0-98e0e5a3476f",
+    "e03a8ccb-e87e-4e51-9283-b302e9310e73": "80c76ce0-bb7e-469f-8440-a40b9f638548",
+    "3bee403e-3993-4930-90e3-f9ad776e82b3": "80c76ce0-bb7e-469f-8440-a40b9f638548",
+    "37198199-cf56-4527-a673-04d1cc144d40": "cfda1e6f-a599-4104-a9e0-98e0e5a3476f"
+  }
+}

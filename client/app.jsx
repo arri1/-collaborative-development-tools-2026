@@ -3,6 +3,32 @@ import { createRoot } from "react-dom/client";
 import * as mediasoupClient from "mediasoup-client";
 
 const TOKEN_KEY = "diszoom_token";
+const EMOJI_GROUPS = [
+  {
+    title: "Smileys",
+    emojis: ["😀", "😁", "😂", "🤣", "😊", "😍", "🥰", "😘", "😎", "🤔", "😭", "😡"]
+  },
+  {
+    title: "Gestures",
+    emojis: ["👍", "👎", "👏", "🙌", "👌", "🤝", "🙏", "💪", "👀", "🔥", "💯", "✨"]
+  },
+  {
+    title: "People",
+    emojis: ["👋", "🫶", "🤗", "🤩", "😴", "🤯", "🥳", "😇", "🫡", "🤠", "🤓", "🧠"]
+  },
+  {
+    title: "Objects",
+    emojis: ["❤️", "💔", "💥", "⭐", "🎉", "🎁", "📌", "💬", "📷", "🎵", "⌛", "✅"]
+  },
+  {
+    title: "Nature",
+    emojis: ["🌞", "🌙", "⭐️", "🌈", "🌊", "🌸", "🌵", "🍀", "🐶", "🐱", "🦊", "🐼"]
+  },
+  {
+    title: "Food",
+    emojis: ["🍕", "🍔", "🍟", "🌮", "🍣", "🍩", "🍪", "🍉", "🍓", "☕", "🍺", "🍰"]
+  }
+];
 
 const initialMedia = () => ({
   socket: null,
@@ -37,6 +63,7 @@ function App() {
   const [inviteInfo, setInviteInfo] = useState("");
   const [messages, setMessages] = useState([]);
   const [messageInput, setMessageInput] = useState("");
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [pendingAttachments, setPendingAttachments] = useState([]);
   const [showEnableAudio, setShowEnableAudio] = useState(false);
   const [mediaConnected, setMediaConnected] = useState(false);
@@ -83,6 +110,8 @@ function App() {
   const mediaRemoteRef = useRef(null);
   const mediaLocalRef = useRef(null);
   const attachmentInputRef = useRef(null);
+  const messageInputRef = useRef(null);
+  const emojiPickerRef = useRef(null);
 
   if (!mediaRef.current) {
     mediaRef.current = initialMedia();
@@ -156,6 +185,21 @@ function App() {
     if (!activeServer || !activeChannel || activeChannel.type === "text") return;
     loadMediaPeers(activeServer.id, activeChannel.id).catch(() => {});
   }, [activeServer?.id, activeChannel?.id, activeChannel?.type]);
+
+  useEffect(() => {
+    setShowEmojiPicker(false);
+  }, [activeServer?.id, activeChannel?.id]);
+
+  useEffect(() => {
+    if (!showEmojiPicker) return;
+    const onPointerDown = evt => {
+      if (!emojiPickerRef.current?.contains(evt.target)) {
+        setShowEmojiPicker(false);
+      }
+    };
+    document.addEventListener("mousedown", onPointerDown);
+    return () => document.removeEventListener("mousedown", onPointerDown);
+  }, [showEmojiPicker]);
 
   useEffect(() => {
     if (!token) return;
@@ -632,6 +676,24 @@ function App() {
     }
   }
 
+
+  function insertEmoji(emoji = "😊") {
+    const input = messageInputRef.current;
+    if (!input) {
+      setMessageInput(prev => `${prev}${emoji}`);
+      return;
+    }
+    const start = input.selectionStart ?? messageInput.length;
+    const end = input.selectionEnd ?? messageInput.length;
+    const next = `${messageInput.slice(0, start)}${emoji}${messageInput.slice(end)}`;
+    setMessageInput(next);
+    requestAnimationFrame(() => {
+      input.focus();
+      const pos = start + emoji.length;
+      input.setSelectionRange(pos, pos);
+    });
+  }
+
   async function sendMessage() {
     if (!activeServer || !activeChannel || activeChannel.type !== "text") return;
     const text = messageInput.trim();
@@ -642,6 +704,7 @@ function App() {
 	  body: JSON.stringify({ channelId: activeChannel.id, text, attachments: pendingAttachments })
     });
     setMessageInput("");
+    setShowEmojiPicker(false);
 	setPendingAttachments([]);
     if (attachmentInputRef.current) attachmentInputRef.current.value = "";
     await refreshServers();
@@ -1393,11 +1456,43 @@ function App() {
                       />
                     </label>
                     <input
+                      ref={messageInputRef}
                       type="text"
                       placeholder="Type a message..."
                       value={messageInput}
                       onChange={e => setMessageInput(e.target.value)}
                     />
+                    <div className="emoji-picker-wrap" ref={emojiPickerRef}>
+                      <button
+                        className="emoji-btn"
+                        type="button"
+                        title="Вставить эмодзи"
+                        onClick={() => setShowEmojiPicker(prev => !prev)}
+                      >
+                        😊
+                      </button>
+                      {showEmojiPicker ? (
+                        <div className="emoji-picker" role="dialog" aria-label="Emoji picker">
+                          {EMOJI_GROUPS.map(group => (
+                            <div key={group.title} className="emoji-group">
+                              <div className="emoji-group-title">{group.title}</div>
+                              <div className="emoji-grid">
+                                {group.emojis.map(emoji => (
+                                  <button
+                                    key={`${group.title}-${emoji}`}
+                                    type="button"
+                                    className="emoji-item"
+                                    onClick={() => insertEmoji(emoji)}
+                                  >
+                                    {emoji}
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : null}
+                    </div>
                     <button onClick={sendMessage}>Send</button>
                   </div>
                 </div>
