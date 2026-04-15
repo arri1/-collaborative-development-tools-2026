@@ -414,7 +414,7 @@ button.danger {
 
 .message-input {
   display: grid;
-  grid-template-columns: 44px 1fr 120px;
+  grid-template-columns: 44px 1fr 44px 120px;
   gap: 10px;
   margin-top: 12px;
 }
@@ -433,6 +433,69 @@ button.danger {
 
 .attach-btn input {
   display: none;
+}
+
+.emoji-btn {
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: #0b1022;
+  color: var(--text);
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.emoji-picker-wrap {
+  position: relative;
+}
+
+.emoji-picker {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 8px);
+  width: min(360px, 80vw);
+  max-height: min(320px, 50vh);
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: #0f162f;
+  box-shadow: 0 16px 24px rgba(0, 0, 0, 0.45);
+  padding: 10px;
+  z-index: 30;
+  display: grid;
+  gap: 10px;
+}
+
+.emoji-group {
+  display: grid;
+  gap: 6px;
+}
+
+.emoji-group-title {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.emoji-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 4px;
+}
+
+.emoji-item {
+  border: 1px solid transparent;
+  background: transparent;
+  border-radius: 8px;
+  font-size: 20px;
+  line-height: 1;
+  padding: 6px;
+  cursor: pointer;
+}
+
+.emoji-item:hover {
+  border-color: var(--border);
+  background: #1a2244;
 }
 
 .message-input input {
