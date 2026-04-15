@@ -5,3 +5,6 @@
 [submodule "project-to_do_list"]
 	path = project-to_do_list
 	url = https://github.com/Ruzeon/project-to_do_list.git
+[submodule "diszoom"]
+	path = diszoom
+	url = https://github.com/qennu/diszoom.git
