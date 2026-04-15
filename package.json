@@ -9,7 +9,8 @@
   },
   "scripts": {
     "start": "node src/server.js",
-    "build:client": "node scripts/build-client.mjs"
+    "build:client": "node scripts/build-client.mjs",
+    "test": "node --test --test-isolation=none"
   },
   "dependencies": {
     "express": "^4.19.2",

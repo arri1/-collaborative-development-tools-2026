@@ -8,7 +8,7 @@ import { nowIso } from "./utils.js";
 const PASSWORD_SALT = process.env.APP_AUTH_SALT || "diszoom";
 const appEventClients = new Set();
 
-function hashPassword(password) {
+export function hashPassword(password) {
   return createHash("sha256").update(`${PASSWORD_SALT}:${password}`).digest("hex");
 }
 
@@ -30,7 +30,7 @@ function auth(req, res, next) {
   next();
 }
 
-function ensureMember(server, userId) {
+export function ensureMember(server, userId) {
   if (server.ownerId === userId) return true;
   return server.members.some(m => m.userId === userId);
 }
@@ -48,7 +48,7 @@ export function broadcastAppEvent(event) {
   }
 }
 
-function hasPerm(server, userId, perm) {
+export function hasPerm(server, userId, perm) {
   if (server.ownerId === userId) return true;
   const member = server.members.find(m => m.userId === userId);
   if (!member) return false;
@@ -59,12 +59,12 @@ function hasPerm(server, userId, perm) {
   return false;
 }
 
-function normalizeChannelType(type) {
+export function normalizeChannelType(type) {
   if (type === "voice" || type === "video" || type === "media") return "media";
   return "text";
 }
 
-function normalizeAttachments(rawAttachments) {
+export function normalizeAttachments(rawAttachments) {
   if (!Array.isArray(rawAttachments)) return [];
   return rawAttachments
     .map(item => {
@@ -79,7 +79,7 @@ function normalizeAttachments(rawAttachments) {
     .filter(Boolean);
 }
 
-function getLastMessage(server) {
+export function getLastMessage(server) {
   if (!server.messages) return null;
   let last = null;
   for (const list of Object.values(server.messages)) {
@@ -139,7 +139,7 @@ async function removeMediaRoom(serverId, channelId) {
   await logEvent("permanent-room-deleted", { roomId, source: "app" });
 }
 
-function serverSummary(server) {
+export function serverSummary(server) {
   return {
     id: server.id,
     name: server.name,
